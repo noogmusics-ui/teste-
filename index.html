@@ -1,0 +1,3654 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://i.postimg.cc" />
+    <link rel="preconnect" href="https://fast.wistia.com" />
+    <link rel="dns-prefetch" href="https://isaqueraposo69.wistia.com" />
+    <link rel="preload" as="image" href="https://i.postimg.cc/nLtmwBrx/IMG-1401.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="https://i.postimg.cc/90v0wHwb/IMG-1402.png" />
+
+    <title>Site</title>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      html.gate-lock,
+      body.gate-lock {
+        overflow: hidden;
+        height: 100% !important;
+      }
+
+      .gate-wrap,
+      #gateVideo {
+        height: 85vh;
+      }
+
+      @supports (height: 100svh) {
+        .gate-wrap,
+        #gateVideo {
+          height: 85svh;
+        }
+      }
+
+      @supports (height: 100dvh) {
+        .gate-wrap,
+        #gateVideo {
+          height: 85dvh;
+        }
+      }
+
+      #gate {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #f5e6d3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.6s ease;
+        backface-visibility: hidden;
+        will-change: opacity;
+      }
+
+      #gate.closing {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .gate-wrap {
+        position: relative;
+        width: 90vw;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 16px;
+        box-shadow: 0 0 0 4px #22c55e, 0 0 30px rgba(34, 197, 94, 0.6);
+        animation: glowBorder 2s ease-in-out infinite;
+      }
+
+      @media (min-width: 768px) {
+        .gate-wrap {
+          width: 100%;
+          max-width: 430px;
+        }
+      }
+
+      @keyframes glowBorder {
+        0%,
+        100% {
+          box-shadow:
+            0 0 0 4px #22c55e,
+            0 0 25px rgba(34, 197, 94, 0.7),
+            0 0 45px rgba(34, 197, 94, 0.5),
+            0 0 65px rgba(34, 197, 94, 0.3);
+        }
+        50% {
+          box-shadow:
+            0 0 0 4px #16a34a,
+            0 0 35px rgba(34, 197, 94, 0.9),
+            0 0 65px rgba(34, 197, 94, 0.7),
+            0 0 95px rgba(34, 197, 94, 0.5);
+        }
+      }
+
+      #gateVideo {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        background: #000;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      #gateVideo::-webkit-media-controls,
+      #gateVideo::-webkit-media-controls-enclosure {
+        display: none !important;
+      }
+
+      .gate-block {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: transparent;
+        pointer-events: auto;
+      }
+
+      /* Botão "Ativar som" — GRANDE NO CENTRO */
+      #gateStart {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        background: rgba(0, 0, 0, 0.4);
+        border: 0;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        backdrop-filter: blur(3px);
+      }
+
+      #gateStart.hidden {
+        display: none;
+      }
+
+      #gateStart .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 32px;
+        border-radius: 16px;
+        border: 0;
+        font: 800 clamp(18px, 4vw, 26px) / 1.2 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        color: #fff;
+        background: #16a34a;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      #gateStart .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      /* Barra de progresso — GROSSA e RÁPIDA */
+      #gateProgress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        z-index: 4;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      #gateProgress .bar {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #22c55e, #16a34a, #22c55e);
+        background-size: 200% 100%;
+        transition: width 0.08s linear;
+        animation: shimmer 1.5s linear infinite;
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      /* CTA meio do vídeo */
+      #gateCTA {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 64px;
+        z-index: 100000;
+        display: none;
+        pointer-events: auto;
+        cursor: pointer;
+        padding: 14px 22px;
+        border-radius: 999px;
+        border: 0;
+        font: 800 16px / 1 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        color: #fff;
+        background: #16a34a;
+        box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+      }
+
+      #gateCTA.show {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Aviso curto */
+      #gateToast {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 120px;
+        z-index: 100001;
+        display: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        font: 700 13px / 1 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        backdrop-filter: blur(4px);
+      }
+
+      #gateToast.show {
+        display: block;
+      }
+
+      /* Bypass /10 */
+      #gateBypass {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        z-index: 100002;
+        display: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 0;
+        cursor: pointer;
+        font: 700 13px / 1 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        color: #0a0a0a;
+        background: #fef08a;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+      }
+
+      #gateBypass.show {
+        display: inline-block;
+      }
+
+      /* ===== Vídeo VERTICAL (9:16) abaixo do texto ===== */
+      #replay-wrap {
+        max-width: 340px;
+        width: 100%;
+        margin: 14px auto 0;
+      }
+
+      @media (min-width: 768px) {
+        #replay-wrap {
+          max-width: 360px;
+        }
+      }
+
+      .replay-aspect {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        background: #000;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      }
+
+      @supports not (aspect-ratio: 9 / 16) {
+        .replay-aspect {
+          padding-top: 177.78%;
+        }
+
+        .replay-aspect > * {
+          position: absolute;
+          inset: 0;
+        }
+      }
+
+      #replayInline {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: #000;
+        object-fit: cover;
+        object-position: center;
+        border: 0;
+        outline: 0;
+      }
+
+      .watched-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 2;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font: 700 12px / 1 Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        color: #052e16;
+        background: #bbf7d0;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+        display: none;
+      }
+
+      .replay-aspect.watched .watched-badge {
+        display: inline-block;
+      }
+
+      /* ===== FACEBOOK FAKE PLUGIN ===== */
+
+      /* Animação do "novo comentário" */
+      .fb-comment-row-pending {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      .fb-comment-row-animate {
+        opacity: 1;
+        transform: translateY(0);
+        transition: all 0.35s ease-out;
+      }
+
+      /* ========================= SEÇÃO DO KIT DE ATIVIDADES (CARROSSEL PROFISSIONAL) ========================= */
+
+      .kit-section {
+        width: 100%;
+        background: radial-gradient(circle at top, #f9e2a4 0, #9b6a24 42%, #6e4a18 100%);
+        padding: 56px 16px 64px;
+        box-sizing: border-box;
+        color: #fff;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      }
+
+      .kit-section-inner {
+        max-width: 480px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .kit-section-tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.18);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .kit-section-title {
+        font-size: clamp(20px, 4.5vw, 26px);
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 6px;
+      }
+
+      .kit-section-sub {
+        font-size: 13px;
+        opacity: 0.9;
+        margin-bottom: 22px;
+      }
+
+      .carousel-section {
+        width: 100%;
+        padding: 50px 0;
+        box-sizing: border-box;
+      }
+
+      .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .carousel-track {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        will-change: transform;
+      }
+
+      .carousel-item {
+        flex: 0 0 auto;
+      }
+
+      .carousel-item img {
+        display: block;
+        height: 320px;
+        width: auto;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .kit-caption {
+        margin-top: 32px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+        padding: 0 20px;
+      }
+
+      .kit-caption span {
+        font-weight: 700;
+      }
+
+      @media (max-width: 768px) {
+        .carousel-item img {
+          height: 220px;
+        }
+
+        .carousel-section {
+          padding: 40px 0;
+        }
+      }
+
+      .activities-list-section {
+        background: linear-gradient(135deg, #8b6f47 0%, #6b5435 100%);
+        padding: 50px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .activity-button {
+        width: 100%;
+        max-width: 450px;
+        padding: 22px 30px;
+        border: none;
+        border-radius: 50px;
+        font-size: 18px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #ffffff;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        text-align: center;
+        line-height: 1.3;
+      }
+
+      .activity-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      .activity-button.green {
+        background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+      }
+
+      .activity-button.orange {
+        background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+      }
+
+      .activity-button.blue {
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      }
+
+      .activity-button.red {
+        background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+      }
+
+      @media (max-width: 768px) {
+        .activities-list-section {
+          padding: 40px 16px;
+          gap: 14px;
+        }
+
+        .activity-button {
+          font-size: 15px;
+          padding: 18px 24px;
+        }
+      }
+
+      .kit-device-frame {
+        position: relative;
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 4px;
+        border: 1px solid #fbbf77;
+        overflow: hidden;
+      }
+
+      .kit-device-screen {
+        background: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+      }
+
+      .kit-device-screen img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .simple-usage-section {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        padding: 60px 20px;
+        text-align: center;
+      }
+
+      .simple-usage-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 50px;
+        line-height: 1.3;
+      }
+
+      .usage-card {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        border-radius: 28px;
+        padding: 50px 40px;
+        max-width: 500px;
+        margin: 0 auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .usage-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+      }
+
+      .usage-card-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+
+      .usage-card-text {
+        font-size: 18px;
+        color: #6b7280;
+        line-height: 1.6;
+        font-weight: 500;
+      }
+
+      @media (max-width: 768px) {
+        .simple-usage-section {
+          padding: 50px 16px;
+        }
+
+        .simple-usage-title {
+          font-size: 24px;
+          margin-bottom: 40px;
+        }
+
+        .usage-card {
+          padding: 40px 28px;
+        }
+
+        .usage-icon {
+          width: 100px;
+          height: 100px;
+        }
+
+        .usage-card-title {
+          font-size: 22px;
+        }
+
+        .usage-card-text {
+          font-size: 16px;
+        }
+      }
+
+      .bonus-section {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        padding: 60px 20px;
+        text-align: center;
+      }
+
+      .bonus-top-card {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        border-radius: 28px;
+        padding: 50px 40px;
+        max-width: 500px;
+        margin: 0 auto 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .pencils-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+      }
+
+      .bonus-and-more {
+        background: linear-gradient(135deg, #92400e 0%, #78350f 100%);
+        padding: 40px 20px;
+        margin: 0;
+        text-align: center;
+      }
+
+      .bonus-and-more h2 {
+        font-size: 38px;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .bonus-guarantee-card {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        padding: 60px 40px;
+        text-align: center;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .bonus-guarantee-title {
+        font-size: 36px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        line-height: 1.15;
+        letter-spacing: 0.5px;
+      }
+
+      .bonus-highlight-container {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-radius: 20px;
+        padding: 35px 40px;
+        display: inline-block;
+        box-shadow: 0 8px 25px rgba(146, 64, 14, 0.2);
+        position: relative;
+        border: 3px solid #f59e0b;
+      }
+
+      .bonus-highlight-container::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        border-radius: 20px;
+        z-index: -1;
+      }
+
+      .bonus-highlight {
+        font-size: 40px;
+        font-weight: 900;
+        color: #92400e;
+        margin: 0;
+        line-height: 1.3;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+      }
+
+      .bonus-number {
+        font-size: 52px;
+        color: #b45309;
+        font-weight: 900;
+      }
+
+      .gift-emoji {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 44px;
+        animation: bounce 2s infinite;
+      }
+
+      .bonus-product-section {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 40px 16px;
+      }
+
+      .bonus-product-card {
+        background: white;
+        border-radius: 20px;
+        padding: 32px 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .bonus-product-image-wrapper {
+        width: 100%;
+        height: 240px;
+        display: block;
+        overflow: hidden;
+        border-radius: 14px;
+        margin-bottom: 24px;
+        background-color: #f8f8f8;
+        position: relative;
+      }
+
+      .bonus-product-image-wrapper img {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        max-height: none !important;
+        min-width: 100% !important;
+        min-height: 100% !important;
+        object-fit: cover !important;
+        object-position: center !important;
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+      }
+
+      .bonus-product-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1E1E1E;
+        margin-bottom: 16px;
+        line-height: 1.3;
+      }
+
+      .bonus-product-description {
+        font-size: 16px;
+        color: #404040;
+        line-height: 1.6;
+        margin-bottom: 24px;
+      }
+
+      .bonus-product-price {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .price-old {
+        font-size: 18px;
+        color: #EF4444;
+        text-decoration: line-through;
+        font-weight: 500;
+      }
+
+      .price-free {
+        font-size: 22px;
+        font-weight: bold;
+        color: #D4AF37;
+        letter-spacing: 0.5px;
+      }
+
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+
+      @media (max-width: 768px) {
+        .bonus-section {
+          padding: 50px 16px;
+        }
+
+        .bonus-top-card {
+          padding: 40px 28px;
+        }
+
+        .pencils-icon {
+          width: 100px;
+          height: 100px;
+        }
+
+        .bonus-and-more h2 {
+          font-size: 28px;
+        }
+
+        .bonus-guarantee-card {
+          padding: 50px 24px;
+        }
+
+        .bonus-guarantee-title {
+          font-size: 26px;
+          margin-bottom: 25px;
+        }
+
+        .bonus-highlight-container {
+          padding: 28px 30px;
+        }
+
+        .bonus-highlight {
+          font-size: 28px;
+        }
+
+        .bonus-number {
+          font-size: 40px;
+        }
+
+        .gift-emoji {
+          font-size: 36px;
+        }
+
+        .bonus-product-section {
+          padding: 30px 16px;
+        }
+
+        .bonus-product-card {
+          padding: 24px 20px;
+        }
+
+        .bonus-product-image-wrapper {
+          height: 200px;
+        }
+
+        .bonus-product-image-wrapper img {
+          width: 100% !important;
+          height: 100% !important;
+          max-width: none !important;
+          max-height: none !important;
+          min-width: 100% !important;
+          min-height: 100% !important;
+          object-fit: cover !important;
+          object-position: center !important;
+        }
+
+        .bonus-product-title {
+          font-size: 20px;
+        }
+
+        .bonus-product-description {
+          font-size: 15px;
+        }
+
+        .price-old {
+          font-size: 16px;
+        }
+
+        .price-free {
+          font-size: 20px;
+        }
+      }
+
+      .recap-section {
+        background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+        padding: 80px 20px;
+      }
+
+      .recap-container {
+        max-width: 540px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 48px 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .recap-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 20px;
+        padding: 3px;
+        background: linear-gradient(90deg,
+          #d4af37 0%,
+          #f4d03f 25%,
+          #d4af37 50%,
+          #f4d03f 75%,
+          #d4af37 100%
+        );
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: goldenBorderFlow 3s linear infinite;
+        background-size: 200% 100%;
+        pointer-events: none;
+      }
+
+      @keyframes goldenBorderFlow {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 200% 0%;
+        }
+      }
+
+      .recap-title {
+        font-size: clamp(22px, 5vw, 28px);
+        font-weight: 400;
+        color: #2d2d2d;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 4px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        letter-spacing: -0.01em;
+      }
+
+      .recap-kit-name {
+        font-size: clamp(22px, 5.5vw, 30px);
+        font-weight: 800;
+        color: #c49a00;
+        text-align: center;
+        line-height: 1.3;
+        margin-bottom: 36px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        letter-spacing: -0.02em;
+      }
+
+      .recap-main-image {
+        width: 100%;
+        max-width: 460px;
+        margin: 0 auto 40px;
+        display: block;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .recap-image {
+        width: 100%;
+        max-width: 440px;
+        margin: 0 auto 36px;
+        display: block;
+        border-radius: 14px;
+      }
+
+      .recap-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 32px 0;
+      }
+
+      .recap-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 18px;
+        font-size: clamp(15px, 3.8vw, 17px);
+        line-height: 1.6;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .recap-item:last-child {
+        border-bottom: none;
+      }
+
+      .recap-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .recap-item-label {
+        font-weight: 700;
+        color: #1a1a1a;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .recap-item-text {
+        font-weight: 400;
+        color: #4a4a4a;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .recap-price-old {
+        text-decoration: line-through;
+        color: #b0b0b0;
+        font-weight: 500;
+        margin-left: 6px;
+        font-size: 0.95em;
+      }
+
+      .recap-extra {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding: 14px 18px;
+        background: #fafafa;
+        border-radius: 12px;
+        font-size: clamp(15px, 3.8vw, 17px);
+        font-weight: 600;
+        color: #1a1a1a;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .recap-extra:last-child {
+        margin-bottom: 0;
+      }
+
+      .recap-emoji {
+        font-size: 20px;
+      }
+
+      @media (max-width: 600px) {
+        .recap-section {
+          padding: 60px 20px;
+        }
+
+        .recap-container {
+          padding: 36px 28px;
+        }
+
+        .recap-item {
+          margin-bottom: 16px;
+          padding: 10px 0;
+        }
+
+        .recap-extra {
+          padding: 12px 16px;
+        }
+      }
+
+      .price-offer-section {
+        background: #ffffff;
+        padding: 50px 20px 60px;
+        text-align: center;
+      }
+
+      .price-offer-container {
+        max-width: 460px;
+        margin: 0 auto;
+      }
+
+      .price-total-text {
+        font-size: clamp(20px, 4.5vw, 24px);
+        font-weight: 500;
+        color: #3a3a3a;
+        margin-bottom: 8px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .price-old-value {
+        font-size: clamp(32px, 7vw, 42px);
+        font-weight: 700;
+        color: #dc2626;
+        text-decoration: line-through;
+        margin-bottom: 8px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .price-today-text {
+        font-size: clamp(20px, 4.5vw, 24px);
+        font-weight: 500;
+        color: #3a3a3a;
+        margin-bottom: 12px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .price-current-value {
+        font-size: clamp(64px, 14vw, 88px);
+        font-weight: 900;
+        color: #16a34a;
+        line-height: 1;
+        margin-bottom: 8px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        letter-spacing: -0.02em;
+      }
+
+      .price-installment {
+        font-size: clamp(16px, 3.8vw, 20px);
+        font-weight: 600;
+        color: #2d2d2d;
+        margin-bottom: 24px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .price-divider {
+        width: 80%;
+        max-width: 300px;
+        height: 1px;
+        background: #e0e0e0;
+        margin: 24px auto;
+      }
+
+      .access-badges {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .access-badge {
+        font-size: clamp(13px, 3vw, 15px);
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .cta-button-large {
+        display: block;
+        width: 100%;
+        max-width: 440px;
+        margin: 0 auto 24px;
+        padding: 22px 40px;
+        background: #16a34a;
+        color: #ffffff;
+        font-size: clamp(18px, 4vw, 22px);
+        font-weight: 700;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        letter-spacing: 0.5px;
+        box-shadow: 0 6px 20px rgba(22, 163, 74, 0.3);
+      }
+
+      .cta-button-large:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(22, 163, 74, 0.4);
+      }
+
+      .trust-badges {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .trust-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: clamp(11px, 2.8vw, 13px);
+        font-weight: 600;
+        color: #4a4a4a;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .trust-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .arrow-down-icon {
+        font-size: 48px;
+        color: #16a34a;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 600px) {
+        .price-offer-section {
+          padding: 40px 20px 50px;
+        }
+
+        .trust-badges {
+          gap: 16px;
+        }
+
+        .access-badges {
+          gap: 8px;
+        }
+      }
+
+      .guarantee-section {
+        background: linear-gradient(180deg, #f5f0e6 0%, #f9f6ef 100%);
+        padding: 60px 20px 70px;
+        text-align: center;
+      }
+
+      .guarantee-container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .guarantee-badge {
+        width: 500px;
+        height: 500px;
+        margin: 0 auto 30px;
+        position: relative;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
+      .guarantee-badge img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        filter: drop-shadow(0 0 0 transparent);
+      }
+
+      .guarantee-stars {
+        display: none;
+      }
+
+      .guarantee-title {
+        font-size: clamp(26px, 5.5vw, 36px);
+        font-weight: 800;
+        color: #1f1f1f;
+        margin-bottom: 28px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .guarantee-text {
+        font-size: clamp(16px, 3.8vw, 19px);
+        line-height: 1.7;
+        color: #3a3a3a;
+        margin-bottom: 24px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .guarantee-text strong {
+        font-weight: 700;
+      }
+
+      .faq-section {
+        background: #f5f5f5;
+        padding: 80px 24px;
+      }
+
+      .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .faq-title {
+        font-size: clamp(28px, 6vw, 42px);
+        font-weight: 800;
+        color: #1f1f1f;
+        margin-bottom: 50px;
+        text-align: center;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: -0.5px;
+      }
+
+      .faq-item {
+        background: #fff;
+        margin-bottom: 16px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .faq-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .faq-question {
+        width: 100%;
+        padding: 24px 28px;
+        background: transparent;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        font-size: clamp(16px, 3.5vw, 19px);
+        font-weight: 600;
+        color: #1f1f1f;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        transition: color 0.3s ease;
+      }
+
+      .faq-question:hover {
+        color: #16a34a;
+      }
+
+      .faq-arrow {
+        flex-shrink: 0;
+        font-size: 20px;
+        color: #16a34a;
+        transition: transform 0.3s ease;
+        font-weight: 700;
+      }
+
+      .faq-item.active .faq-arrow {
+        transform: rotate(90deg);
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, padding 0.4s ease;
+      }
+
+      .faq-item.active .faq-answer {
+        max-height: 500px;
+      }
+
+      .faq-answer-content {
+        padding: 0 28px 24px 28px;
+        font-size: clamp(15px, 3.2vw, 17px);
+        line-height: 1.7;
+        color: #3a3a3a;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      @media (max-width: 600px) {
+        .faq-section {
+          padding: 60px 20px;
+        }
+
+        .faq-title {
+          margin-bottom: 40px;
+        }
+
+        .faq-question {
+          padding: 20px 22px;
+          gap: 12px;
+        }
+
+        .faq-answer-content {
+          padding: 0 22px 20px 22px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .guarantee-section {
+          padding: 50px 20px 60px;
+        }
+
+        .guarantee-badge {
+          width: 140px;
+          height: 140px;
+        }
+
+        .guarantee-badge::after {
+          font-size: 28px;
+        }
+
+        .guarantee-stars {
+          letter-spacing: 50px;
+          padding-left: 50px;
+          font-size: 18px;
+        }
+      }
+
+      .footer {
+        background: #ff0080;
+        padding: 50px 24px 40px;
+        text-align: center;
+      }
+
+      .footer-logo {
+        max-width: 180px;
+        margin: 0 auto 30px;
+      }
+
+      .footer-logo-text {
+        font-size: 32px;
+        font-weight: 800;
+        color: #000;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .footer-logo-badge {
+        display: inline-block;
+        background: #fff;
+        padding: 16px 24px;
+        border-radius: 50px;
+        margin-bottom: 30px;
+      }
+
+      .footer-social {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 30px;
+      }
+
+      .footer-social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: #fff;
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-decoration: none;
+      }
+
+      .footer-social-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .footer-social-icon {
+        width: 28px;
+        height: 28px;
+        color: #ff0080;
+      }
+
+      .footer-copyright {
+        font-size: 14px;
+        color: #fff;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 600px) {
+        .footer {
+          padding: 40px 20px 32px;
+        }
+
+        .footer-logo-text {
+          font-size: 26px;
+        }
+
+        .footer-logo-badge {
+          padding: 12px 20px;
+        }
+
+        .footer-social-link {
+          width: 45px;
+          height: 45px;
+        }
+
+        .footer-social-icon {
+          width: 24px;
+          height: 24px;
+        }
+
+        .footer-copyright {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Gate -->
+    <div id="gate" aria-modal="true" role="dialog">
+      <div class="gate-wrap">
+        <video
+          id="gateVideo"
+          playsinline
+          webkit-playsinline
+          preload="metadata"
+          muted
+          disablepictureinpicture
+          disableremoteplayback
+          x-webkit-airplay="deny"
+          controlslist="nodownload noplaybackrate noremoteplayback nofullscreen"
+        ></video>
+
+        <div id="gateProgress">
+          <div class="bar"></div>
+        </div>
+
+        <div class="gate-block" aria-hidden="true"></div>
+
+        <button id="gateStart" type="button" aria-label="Ativar som">
+          <span class="btn">🔊 Ativar som e assistir</span>
+        </button>
+
+        <div id="gateToast" role="status" aria-live="polite">
+          Assista até o fim para liberar
+        </div>
+
+        <button
+          id="gateCTA"
+          type="button"
+          aria-label="Ir para a página de vendas"
+          role="button"
+          tabindex="0"
+        >
+          ⚡ Quero ter acesso
+        </button>
+
+        <button id="gateBypass" type="button" aria-label="Pular vídeo">
+          ⏭️ Ir para a página
+        </button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const WISTIA_ID = "soxon5f5rd";
+
+        // gate
+        let FALLBACK_DURATION = 40;
+        const MID_CTA_FRACTION = 0.5;
+        const BYPASS_SUFFIX = "/10";
+        const LS_KEY_WATCHED = "gate_watched_v1";
+
+        const html = document.documentElement;
+        const body = document.body;
+        const gate = document.getElementById("gate");
+        const video = document.getElementById("gateVideo");
+        const startBtn = document.getElementById("gateStart");
+        const progress = document.querySelector("#gateProgress .bar");
+        const gateCTA = document.getElementById("gateCTA");
+        const gateBypass = document.getElementById("gateBypass");
+        const gateToast = document.getElementById("gateToast");
+
+        // Estados
+        let started = false,
+          finished = false,
+          guard = null,
+          watchdog = null;
+        let clickedCTA = false,
+          nearEnd = false,
+          ended = false,
+          releaseWaiter = null;
+
+        html.classList.add("gate-lock");
+        body.classList.add("gate-lock");
+
+        // bloqueia gestos nativos no <video>
+        const stop = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        };
+
+        ["touchstart", "touchmove", "gesturestart", "dblclick", "contextmenu"].forEach((evt) => {
+          video.addEventListener(evt, stop, { passive: false });
+        });
+
+        function showToast(msg) {
+          try {
+            gateToast.textContent = msg;
+            gateToast.classList.add("show");
+            setTimeout(() => gateToast.classList.remove("show"), 1600);
+          } catch (_) {}
+        }
+
+        function findSalesSection() {
+          return (
+            document.querySelector("[data-sales-section]") ||
+            document.getElementById("pagina-de-vendas") ||
+            document.getElementById("paginadevendas") ||
+            document.getElementById("vendas") ||
+            document.getElementById("sales") ||
+            document.getElementById("checkout") ||
+            document.body
+          );
+        }
+
+        function scrollToSales() {
+          const t = findSalesSection();
+
+          try {
+            t.scrollIntoView({ behavior: "smooth", block: "start" });
+          } catch (_) {
+            const r = t.getBoundingClientRect();
+            window.scrollTo({ top: window.pageYOffset + r.top, behavior: "smooth" });
+          }
+        }
+
+        function videoNearlyDone() {
+          try {
+            if (video.ended) return true;
+            const d = video.duration || FALLBACK_DURATION;
+            if (!d || !isFinite(d)) return false;
+            return video.currentTime >= d * 0.995 || d - video.currentTime <= 0.25;
+          } catch (_) {
+            return false;
+          }
+        }
+
+        function canRelease() {
+          return clickedCTA && (ended || nearEnd || videoNearlyDone());
+        }
+
+        function forceRemoveGate() {
+          if (finished) return;
+          finished = true;
+
+          try {
+            video.pause();
+          } catch (_) {}
+
+          try {
+            video.removeAttribute("src");
+            video.load && video.load();
+          } catch (_) {}
+
+          try {
+            gate.classList.add("closing");
+          } catch (_) {}
+
+          setTimeout(() => {
+            try {
+              gate.remove();
+            } catch (_) {}
+
+            html.classList.remove("gate-lock");
+            body.classList.remove("gate-lock");
+            body.style.overflow = "";
+            html.style.overflow = "";
+
+            window.dispatchEvent(new Event("resize"));
+            window.dispatchEvent(new Event("scroll"));
+            document.dispatchEvent(new CustomEvent("gate:released"));
+          }, 200);
+
+          try {
+            localStorage.setItem(LS_KEY_WATCHED, "1");
+          } catch (_) {}
+
+          setTimeout(scrollToSales, 260);
+
+          if (guard) clearInterval(guard);
+          if (watchdog) clearTimeout(watchdog);
+          if (releaseWaiter) clearInterval(releaseWaiter);
+        }
+
+        function tryRelease() {
+          if (canRelease()) forceRemoveGate();
+        }
+
+        function startGuards() {
+          if (guard) return;
+          let maxT = 0;
+
+          guard = setInterval(() => {
+            const t = video.currentTime || 0;
+            if (t > maxT + 0.25) maxT = t;
+            if (t < maxT - 0.25) video.currentTime = maxT;
+
+            const dur =
+              video.duration && !isNaN(video.duration)
+                ? video.duration
+                : FALLBACK_DURATION;
+
+            if (progress) {
+              const pct = dur > 0 ? Math.min(100, (t / dur) * 100) : 0;
+              const boostedPct = Math.min(100, pct + pct * 0.02);
+              progress.style.width = boostedPct + "%";
+            }
+
+            if (gateCTA && dur > 0 && t >= dur * MID_CTA_FRACTION) {
+              gateCTA.classList.add("show");
+            }
+
+            if (dur > 0 && (t >= dur * 0.995 || dur - t <= 0.25)) {
+              nearEnd = true;
+              tryRelease();
+            }
+          }, 80);
+        }
+
+        async function getMp4FromWistia(id) {
+          const r = await fetch(
+            "https://fast.wistia.com/embed/medias/" + id + ".json",
+            { mode: "cors", credentials: "omit" }
+          );
+          const j = await r.json();
+          const m = j && j.media ? j.media : {};
+
+          if (m.duration && !isNaN(m.duration)) {
+            FALLBACK_DURATION = Math.ceil(m.duration);
+          }
+
+          const a = (m.assets || [])
+            .filter(
+              (x) => x.contentType === "video/mp4" || /mp4/i.test(x.type || "")
+            )
+            .sort((A, B) => (B.width || 0) - (A.width || 0));
+
+          if (!a.length) throw new Error("Sem MP4 disponível");
+          return a[0].url;
+        }
+
+        function primeVideo() {
+          video.setAttribute("playsinline", "true");
+          video.setAttribute("webkit-playsinline", "true");
+          video.setAttribute("disablepictureinpicture", "true");
+          video.setAttribute("disableremoteplayback", "true");
+          video.setAttribute("x-webkit-airplay", "deny");
+          video.setAttribute(
+            "controlslist",
+            "nodownload noplaybackrate noremoteplayback nofullscreen"
+          );
+
+          video.controls = false;
+          video.muted = true;
+          video.volume = 0;
+          video.preload = "metadata";
+
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+          if (isIOS) {
+            video.load();
+          }
+        }
+
+        async function boot() {
+          try {
+            primeVideo();
+            const mp4 = await getMp4FromWistia(WISTIA_ID);
+            video.src = mp4 + "#t=0.001";
+
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+            if (!isIOS) {
+              try {
+                const p = video.play();
+                if (p && p.then) await p;
+                if (!started) {
+                  started = true;
+                  startGuards();
+                }
+              } catch (_) {}
+            }
+
+            startBtn.addEventListener(
+              "click",
+              async () => {
+                try {
+                  if (video.readyState < 2) {
+                    video.load();
+                    await new Promise((r) => {
+                      video.addEventListener("loadeddata", r, { once: true });
+                      setTimeout(r, 3000);
+                    });
+                  }
+
+                  video.muted = false;
+                  video.volume = 1;
+
+                  const playPromise = video.play();
+                  if (playPromise && playPromise.then) {
+                    await playPromise;
+                  }
+
+                  if (!started) {
+                    started = true;
+                    startGuards();
+                  }
+
+                  startBtn.classList.add("hidden");
+                } catch (err) {
+                  console.error("Erro ao iniciar vídeo:", err);
+
+                  try {
+                    video.muted = true;
+                    const retryPlay = video.play();
+                    if (retryPlay && retryPlay.then) await retryPlay;
+
+                    if (!started) {
+                      started = true;
+                      startGuards();
+                    }
+
+                    showToast("Vídeo iniciado sem som");
+                    startBtn.classList.add("hidden");
+                  } catch (err2) {
+                    showToast("Toque novamente para iniciar");
+                  }
+                }
+              },
+              { passive: false }
+            );
+
+            video.addEventListener("ended", () => {
+              ended = true;
+              nearEnd = true;
+              tryRelease();
+            });
+
+            video.addEventListener("timeupdate", () => {
+              if (videoNearlyDone()) {
+                nearEnd = true;
+                tryRelease();
+              }
+            });
+
+            const onCTA = (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              clickedCTA = true;
+              forceRemoveGate();
+            };
+
+            gateCTA.addEventListener("click", onCTA, { passive: false });
+            gateCTA.addEventListener("touchstart", onCTA, { passive: false });
+
+            if (
+              String(location.pathname || "").endsWith(BYPASS_SUFFIX) ||
+              String(location.href || "").endsWith(BYPASS_SUFFIX)
+            ) {
+              gateBypass.classList.add("show");
+            }
+
+            gateBypass.addEventListener("click", () => forceRemoveGate());
+
+            watchdog = setTimeout(
+              () => {},
+              FALLBACK_DURATION * 1000 + 15000
+            );
+          } catch (_) {
+            startBtn.classList.remove("hidden");
+          }
+        }
+
+        boot();
+
+        /* ===== Replay vertical (9:16) + poster e badge ===== */
+        const REPLAY_ID = "soxon5f5rd";
+
+        function findTextBlock() {
+          const all = document.querySelectorAll(
+            "section,div,article,main,h1,h2,h3,p"
+          );
+          const a =
+            "veja como é facil ensinar seu filho(a) a ler com o grafismo fonético";
+          const b = "aperte o play";
+
+          for (let i = 0; i < all.length; i++) {
+            const el = all[i];
+            const t = (el.innerText || el.textContent || "").toLowerCase();
+            if (t.indexOf(a) !== -1 && t.indexOf(b) !== -1) return el;
+          }
+          return null;
+        }
+
+        function attachFacebookInteractions(root) {
+          if (!root) return;
+
+          function goToFbLogin() {
+            try {
+              window.open("https://www.facebook.com/login.php", "_blank", "noopener");
+            } catch (_) {
+              location.href = "https://www.facebook.com/login.php";
+            }
+          }
+
+          const likeButtons = root.querySelectorAll('[data-fb-action="like"]');
+          likeButtons.forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              goToFbLogin();
+            });
+          });
+
+          const shareButtons = root.querySelectorAll('[data-fb-action="share"]');
+          shareButtons.forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              goToFbLogin();
+            });
+          });
+
+          const commentButtons = root.querySelectorAll('[data-fb-action="comment"]');
+          commentButtons.forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              const postId = btn.getAttribute("data-fb-post");
+              if (!postId) return;
+
+              const panel = root.querySelector(
+                '[data-fb-comments="' + postId + '"]'
+              );
+              if (!panel) return;
+
+              const isHidden =
+                panel.style.display === "none" || panel.style.display === "";
+              panel.style.display = isHidden ? "block" : "none";
+
+              if (isHidden) {
+                const firstInput = panel.querySelector("input,textarea");
+                if (firstInput) firstInput.focus();
+              }
+            });
+          });
+
+          const commentInputs = root.querySelectorAll("[data-fb-input]");
+          commentInputs.forEach((input) => {
+            input.addEventListener("keydown", function (e) {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                e.stopPropagation();
+                goToFbLogin();
+              }
+            });
+          });
+
+          const sendButtons = root.querySelectorAll("[data-fb-send]");
+          sendButtons.forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              goToFbLogin();
+            });
+          });
+
+          const newRow = root.querySelector(
+            '.fb-comment-row-pending[data-fb-new="1"]'
+          );
+          if (newRow) {
+            setTimeout(() => {
+              newRow.classList.add("fb-comment-row-animate");
+              const meta = newRow.querySelector("[data-fb-meta-time]");
+              if (meta) {
+                meta.textContent = "Curtir · Responder · 1 s";
+              }
+            }, 900);
+          }
+        }
+
+        function insertReplayVideo(posterUrl, mp4Url) {
+          if (document.getElementById("replay-wrap")) return;
+
+          const target = findTextBlock();
+          if (!target) return;
+
+          const wrap = document.createElement("div");
+          wrap.id = "replay-wrap";
+
+          const holder = document.createElement("div");
+          holder.className = "replay-aspect";
+
+          const badge = document.createElement("span");
+          badge.className = "watched-badge";
+          badge.textContent = "✓ Assistido";
+
+          const v = document.createElement("video");
+          v.id = "replayInline";
+
+          v.setAttribute("playsinline", "true");
+          v.setAttribute("webkit-playsinline", "true");
+          v.setAttribute("preload", "metadata");
+          v.setAttribute("controls", "true");
+          v.setAttribute("controlsList", "nodownload");
+          v.setAttribute("disablePictureInPicture", "true");
+          v.setAttribute("disableremoteplayback", "true");
+          v.setAttribute("x-webkit-airplay", "deny");
+
+          if (posterUrl) v.setAttribute("poster", posterUrl);
+
+          v.style.width = "100%";
+          v.style.height = "100%";
+          v.style.objectFit = "cover";
+          v.style.background = "#000";
+
+          if (mp4Url) {
+            v.src = mp4Url;
+          } else {
+            v.addEventListener("play", (e) => {
+              e.preventDefault();
+              location.href =
+                "https://isaqueraposo69.wistia.com/medias/" + REPLAY_ID;
+            });
+          }
+
+          try {
+            if (localStorage.getItem(LS_KEY_WATCHED) === "1") {
+              holder.classList.add("watched");
+            }
+          } catch (_) {}
+
+          holder.appendChild(badge);
+          holder.appendChild(v);
+          wrap.appendChild(holder);
+          target.insertAdjacentElement("afterend", wrap);
+
+          const arrowSection = document.createElement("div");
+          arrowSection.style.cssText =
+            "width:100%;background:#fff9e6;padding:40px 0;margin-top:32px";
+          arrowSection.innerHTML =
+            '<div style="display:flex;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="#4cd964" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+
+          const benefitsSection = document.createElement("div");
+          benefitsSection.style.cssText =
+            "width:100%;background:#f2f2f2;padding:48px 24px";
+          benefitsSection.innerHTML =
+            '<div style="max-width:900px;margin:0 auto;text-align:center"><h2 style="font-size:clamp(24px,5vw,30px);font-weight:800;color:#1d1d1d;margin-bottom:12px;line-height:1.3;font-family:Inter,system-ui,-apple-system,sans-serif">Praticando apenas 10 minutos por dia,</h2><div style="display:inline-block;background:#fff6bf;padding:8px 16px;border-radius:4px"><h3 style="font-size:clamp(28px,5.5vw,34px);font-weight:800;color:#b28a00;line-height:1.3;font-family:Inter,system-ui,-apple-system,sans-serif">Seu filho colherá estes benefícios para o resto da vida!</h3></div></div>';
+
+        const cardSection = document.createElement("div");
+cardSection.style.cssText =
+  "width:100%;background:#f2f2f2;padding:0 24px 20px 24px";
+cardSection.innerHTML =
+  '<div style="max-width:500px;margin:0 auto;background:#ffffff;border:2px dashed #b28a00;border-radius:14px;padding:clamp(24px,5vw,40px);text-align:center"><div style="font-size:clamp(76px,16vw,96px);font-weight:700;color:#b28a00;margin-bottom:12px;font-family:Inter,system-ui,-apple-system,sans-serif">1</div><h4 style="font-size:clamp(18px,4vw,22px);font-weight:800;color:#1d1d1d;margin-bottom:10px;font-family:Inter,system-ui,-apple-system,sans-serif">Crianças em fase de alfabetização:</h4><p style="font-size:clamp(14px,3vw,17px);font-weight:400;color:#4b4b4b;line-height:1.6;max-width:450px;margin:0 auto;font-family:Inter,system-ui,-apple-system,sans-serif">Ideal para crianças que estão dando os primeiros passos na leitura, o método oferece uma abordagem estruturada e intuitiva, ajudando a desenvolver uma base sólida e segura.</p></div>';
+
+
+        const cardSection2 = document.createElement("div");
+cardSection2.style.cssText =
+  "width:100%;background:#f2f2f2;padding:0 24px 20px 24px";
+cardSection2.innerHTML =
+  '<div style="max-width:500px;margin:0 auto;background:#ffffff;border:2px dashed #b28a00;border-radius:14px;padding:clamp(24px,5vw,40px);text-align:center"><div style="font-size:clamp(76px,16vw,96px);font-weight:700;color:#b28a00;margin-bottom:12px;font-family:Inter,system-ui,-apple-system,sans-serif">2</div><h4 style="font-size:clamp(18px,4vw,22px);font-weight:800;color:#1d1d1d;margin-bottom:10px;font-family:Inter,system-ui,-apple-system,sans-serif">Pais e educadores que buscam alternativas aos métodos tradicionais:</h4><p style="font-size:clamp(14px,3vw,17px);font-weight:400;color:#4b4b4b;line-height:1.6;max-width:450px;margin:0 auto;font-family:Inter,system-ui,-apple-system,sans-serif">Se você procura uma forma de ensino mais personalizada, que respeita o ritmo individual de cada criança, esse método é uma excelente escolha, fugindo da memorização forçada e trazendo aprendizado natural e eficaz.</p></div>';
+
+
+       const cardSection3 = document.createElement("div");
+cardSection3.style.cssText =
+  "width:100%;background:#f2f2f2;padding:0 24px 20px 24px";
+cardSection3.innerHTML =
+  '<div style="max-width:500px;margin:0 auto;background:#ffffff;border:2px dashed #b28a00;border-radius:14px;padding:clamp(24px,5vw,40px);text-align:center"><div style="font-size:clamp(76px,16vw,96px);font-weight:700;color:#b28a00;margin-bottom:12px;font-family:Inter,system-ui,-apple-system,sans-serif">3</div><h4 style="font-size:clamp(18px,4vw,22px);font-weight:800;color:#1d1d1d;margin-bottom:10px;font-family:Inter,system-ui,-apple-system,sans-serif">Crianças com dificuldade de leitura:</h4><p style="font-size:clamp(14px,3vw,17px);font-weight:400;color:#4b4b4b;line-height:1.6;max-width:450px;margin:0 auto;font-family:Inter,system-ui,-apple-system,sans-serif">Para crianças que enfrentam desafios na leitura e compreensão, o Método de Grafismo Fonético oferece um suporte extra com atividades lúdicas que facilitam o entendimento dos sons e das palavras, fortalecendo a confiança e o gosto pelo aprendizado.</p></div>';
+
+
+        const cardSection4 = document.createElement("div");
+cardSection4.style.cssText =
+  "width:100%;background:#f2f2f2;padding:0 24px 48px 24px";
+cardSection4.innerHTML =
+  '<div style="max-width:500px;margin:0 auto;background:#ffffff;border:2px dashed #b28a00;border-radius:14px;padding:clamp(24px,5vw,40px);text-align:center"><div style="font-size:clamp(76px,16vw,96px);font-weight:700;color:#b28a00;margin-bottom:12px;font-family:Inter,system-ui,-apple-system,sans-serif">4</div><h4 style="font-size:clamp(18px,4vw,22px);font-weight:800;color:#1d1d1d;margin-bottom:10px;line-height:1.4;font-family:Inter,system-ui,-apple-system,sans-serif">Escolas e instituições que valorizam inovação no ensino:</h4><p style="font-size:clamp(14px,3vw,17px);font-weight:400;color:#4b4b4b;line-height:1.6;max-width:450px;margin:0 auto;font-family:Inter,system-ui,-apple-system,sans-serif">Perfeito para escolas que buscam métodos comprovados, o grafismo fonético, inspirado no método americano, traz uma abordagem moderna que gera resultados reais e duradouros na formação dos alunos.</p></div>';
+
+          const facebookSection = document.createElement("div");
+          facebookSection.style.cssText =
+            "width:100%;background:#ffffff;padding:60px 24px;";
+
+          /* aqui eu coloquei em template literal pra ficar código JS válido */
+          facebookSection.innerHTML = `
+<div style="max-width:700px;margin:0 auto;font-family:Inter,system-ui,-apple-system,sans-serif;">
+  <h2 style="font-size:clamp(22px,4.5vw,28px);font-weight:700;text-align:center;margin-bottom:6px;color:#1d1d1d;line-height:1.4">
+    Veja o que pais e educadores estão comentando sobre o
+    <span style="background:#fff6bf;color:#b28a00;padding:2px 6px;border-radius:4px">
+      Kit de Grafismo Fonético
+    </span>
+  </h2>
+  <p style="font-size:12px;color:#6b7280;text-align:center;margin-bottom:24px;"></p>
+
+  <!-- Cabeçalho tipo Facebook -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+    <div style="width:40px;height:40px;border-radius:999px;background:#1877f2;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">
+      f
+    </div>
+    <div>
+      <div style="font-weight:700;font-size:14px;color:#111827;">Clube Grafismo Kids</div>
+      <div style="font-size:12px;color:#6b7280;">Página · Método de leitura infantil</div>
+    </div>
+  </div>
+
+  <!-- POST 1 (com imagem) -->
+  <div style="background:#ffffff;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.08);margin-bottom:24px;border:1px solid #e5e7eb;">
+    <!-- Topo do post -->
+    <div style="padding:12px 12px 8px 12px;display:flex;align-items:flex-start;gap:8px;">
+      <img src="https://i.postimg.cc/G2ZNJCym/foto-1.jpg" alt="Perfil" loading="lazy" style="width:40px;height:40px;border-radius:999px;object-fit:cover;">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="font-weight:600;font-size:14px;color:#111827;">Camila Alves</span>
+        </div>
+        <div style="font-size:11px;color:#6b7280;">
+          1 h ·
+          <span style="margin-left:4px;display:inline-flex;align-items:center;gap:4px;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="#6b7280" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.03 2 11C2 15.97 6.48 20 12 20C17.52 20 22 15.97 22 11C22 6.03 17.52 2 12 2ZM12 4C15.87 4 19 6.69 19.75 10H15.5C14.95 8.84 13.6 8 12 8C10.4 8 9.05 8.84 8.5 10H4.25C5 6.69 8.13 4 12 4ZM12 18C8.13 18 5 15.31 4.25 12H8.5C9.05 13.16 10.4 14 12 14C13.6 14 14.95 13.16 15.5 12H19.75C19 15.31 15.87 18 12 18Z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+      <div style="font-size:16px;color:#6b7280;cursor:pointer;">⋯</div>
+    </div>
+
+    <!-- Texto do post -->
+    <div style="padding:0 12px 8px 12px;font-size:14px;color:#111827;line-height:1.5;">
+      Eu juro que nunca vi minha filha tão empolgada pra "brincar de letrinhas" 😂
+      Em menos de 2 semanas ela já está juntando sílabas sozinha. Obrigada
+      <span style="color:#1877f2;">@ClubeGrafismoKids</span>, vocês acertaram demais nesse kit!
+    </div>
+
+    <!-- Imagem do post (foto do filho usando o kit) -->
+    <div style="margin-top:8px;border-top:1px solid #e5e7eb;">
+      <img
+        src="https://i.postimg.cc/sfL6WsRk/Captura-de-tela-2025-11-22-114736.png"
+        alt="Foto do filho usando o kit"
+        style="width:100%;max-height:420px;object-fit:cover;display:block;"
+      >
+    </div>
+
+    <!-- Contador de reações e comentários -->
+    <div style="padding:8px 12px 0 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280;">
+      <div style="display:flex;align-items:center;gap:4px;">
+        <div style="display:flex;align-items:center;">
+          <div style="width:16px;height:16px;border-radius:999px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1px solid #fff;">👍</div>
+          <div style="margin-left:-4px;width:16px;height:16px;border-radius:999px;background:#f97316;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1px solid #fff;">❤️</div>
+        </div>
+        <span>152</span>
+      </div>
+      <div>23 comentários · 6 compartilhamentos</div>
+    </div>
+
+    <!-- Barra de ações -->
+    <div style="margin:4px 12px 0 12px;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:4px 0;display:flex;justify-content:space-around;font-size:13px;color:#4b5563;">
+      <button
+        type="button"
+        data-fb-action="like"
+        data-fb-post="1"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 21H5C3.9 21 3 20.1 3 19V12C3 10.9 3.9 10 5 10H9V21ZM21 11C21 9.9 20.1 9 19 9H14.69L15.64 4.43L15.66 4.11C15.66 3.7 15.5 3.31 15.21 3.02L14.17 2L8.59 7.59C8.22 7.95 8 8.45 8 9V19C8 20.1 8.9 21 10 21H17.5C18.37 21 19.14 20.44 19.41 19.62L21.86 12.54C21.95 12.28 22 12.02 22 11.75V11.5L21.99 11.45L21.99 11.4C21.7 11.15 21.37 11 21 11Z"/>
+        </svg>
+        Curtir
+      </button>
+
+      <button
+        type="button"
+        data-fb-action="comment"
+        data-fb-post="1"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4C2.9 2 2 2.9 2 4V18L6 14H20C21.1 14 22 13.1 22 12V4C22 2.9 21.1 2 20 2Z"/>
+        </svg>
+        Comentar
+      </button>
+
+      <button
+        type="button"
+        data-fb-action="share"
+        data-fb-post="1"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5C21 3.34 19.66 2 18 2C16.34 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12C3 13.66 4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.35C15.11 18.56 15.08 18.78 15.08 19C15.08 20.61 16.39 21.92 18 21.92C19.61 21.92 20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z"/>
+        </svg>
+        Compartilhar
+      </button>
+    </div>
+
+    <!-- Comentários do post 1 (JÁ VISÍVEL) -->
+    <div data-fb-comments="1" style="padding:8px 12px 10px 12px;font-size:13px;display:block;">
+      <!-- Label de comentários recentes -->
+      <div style="font-size:12px;color:#6b7280;margin-bottom:6px;">
+        Comentários recentes
+      </div>
+
+      <!-- Comentário fixo já existente -->
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+        <img src="https://i.postimg.cc/Jz1FQKGH/foto-2.jpg" alt="Perfil" loading="lazy" style="width:32px;height:32px;border-radius:999px;object-fit:cover;">
+        <div style="background:#f0f2f5;border-radius:16px;padding:8px 10px;max-width:100%;">
+          <div style="font-weight:600;color:#111827;font-size:13px;margin-bottom:2px;">
+            Patrícia Nogueira
+          </div>
+          <div style="color:#111827;line-height:1.4;">
+            aqui em casa tbm foi assim kkkk, no começo eu achei q nao ia dar em nada
+            e agora ela pede pra fazer as atividades todo dia 😍
+          </div>
+        </div>
+      </div>
+
+      <div style="padding-left:40px;font-size:12px;color:#6b7280;margin-top:2px;margin-bottom:6px;">
+        Curtir · Responder · 18 min
+      </div>
+
+      <!-- Comentário que ANIMA como se tivesse acabado de ser enviado -->
+      <div
+        class="fb-comment-row-pending"
+        data-fb-new="1"
+        style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;"
+      >
+        <img src="https://i.postimg.cc/MGLrqStH/foto-3.jpg" alt="Perfil" loading="lazy" style="width:32px;height:32px;border-radius:999px;object-fit:cover;">
+        <div style="background:#f0f2f5;border-radius:16px;padding:8px 10px;max-width:100%;">
+          <div style="font-weight:600;color:#111827;font-size:13px;margin-bottom:2px;">
+            João Pedro
+          </div>
+          <div style="color:#111827;line-height:1.4;">
+            mano serio esse kit ajudou mtoo meu sobrinho, ele nao conseguia nem parar
+            sentado e agora ta concentrado fazendo os desenhos
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="padding-left:40px;font-size:12px;color:#6b7280;margin-top:2px;margin-bottom:6px;"
+        data-fb-meta-time
+      >
+        Curtir · Responder · agora mesmo
+      </div>
+
+      <!-- Caixa de escrever comentário -->
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <div style="width:32px;height:32px;border-radius:999px;background:#e5e7eb;"></div>
+        <div
+          style="flex:1;display:flex;align-items:center;gap:6px;background:#ffffff;border-radius:999px;border:1px solid #d1d5db;padding:2px 6px;"
+        >
+          <input
+            type="text"
+            placeholder="Escreva um comentário..."
+            data-fb-input="1"
+            style="flex:1;border:none;font-size:13px;padding:4px 4px;outline:none;background:transparent;"
+          />
+          <button
+            type="button"
+            data-fb-send="1"
+            aria-label="Publicar comentário"
+            style="border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:4px;"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.4 20.6L4.8 13.2L11.2 12L4.8 10.8L3.4 3.4L21 12L3.4 20.6Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST 2 (só texto) -->
+  <div style="background:#ffffff;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.06);margin-bottom:24px;border:1px solid #e5e7eb;">
+    <div style="padding:12px 12px 8px 12px;display:flex;align-items:flex-start;gap:8px;">
+      <img src="https://i.postimg.cc/C5GvGf0f/foto-4.jpg" alt="Perfil" loading="lazy" style="width:40px;height:40px;border-radius:999px;object-fit:cover;">
+      <div style="flex:1%;">
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="font-weight:600;font-size:14px;color:#111827;">Rafael Costa</span>
+        </div>
+        <div style="font-size:11px;color:#6b7280;">3 h · Público</div>
+      </div>
+      <div style="font-size:16px;color:#6b7280;cursor:pointer;">⋯</div>
+    </div>
+
+    <div style="padding:0 12px 10px 12px;font-size:14px;color:#111827;line-height:1.5;">
+      Sou professor do 2º ano e comecei a usar o material do
+      <span style="color:#1877f2;">@ClubeGrafismoKids</span> com a turma.
+      Metade da sala destravou a leitura em menos de um mês. É muito nítida a diferença de atenção deles.
+    </div>
+
+    <div style="padding:4px 12px 0 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280;">
+      <div style="display:flex;align-items:center;gap:4px;">
+        <div style="display:flex;align-items:center;">
+          <div style="width:16px;height:16px;border-radius:999px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1px solid #fff;">👍</div>
+          <div style="margin-left:-4px;width:16px;height:16px;border-radius:999px;background:#f97316;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1px solid #fff;">😆</div>
+        </div>
+        <span>87</span>
+      </div>
+      <div>14 comentários · 3 compartilhamentos</div>
+    </div>
+
+    <div style="margin:4px 12px 0 12px;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:4px 0;display:flex;justify-content:space-around;font-size:13px;color:#4b5563;">
+      <button
+        type="button"
+        data-fb-action="like"
+        data-fb-post="2"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 21H5C3.9 21 3 20.1 3 19V12C3 10.9 3.9 10 5 10H9V21ZM21 11C21 9.9 20.1 9 19 9H14.69L15.64 4.43L15.66 4.11C15.66 3.7 15.5 3.31 15.21 3.02L14.17 2L8.59 7.59C8.22 7.95 8 8.45 8 9V19C8 20.1 8.9 21 10 21H17.5C18.37 21 19.14 20.44 19.41 19.62L21.86 12.54C21.95 12.28 22 12.02 22 11.75V11.5L21.99 11.45L21.99 11.4C21.7 11.15 21.37 11 21 11Z"/>
+        </svg>
+        Curtir
+      </button>
+
+      <button
+        type="button"
+        data-fb-action="comment"
+        data-fb-post="2"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4C2.9 2 2 2.9 2 4V18L6 14H20C21.1 14 22 13.1 22 12V4C22 2.9 21.1 2 20 2Z"/>
+        </svg>
+        Comentar
+      </button>
+
+      <button
+        type="button"
+        data-fb-action="share"
+        data-fb-post="2"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5C21 3.34 19.66 2 18 2C16.34 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12C3 13.66 4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.35C15.11 18.56 15.08 18.78 15.08 19C15.08 20.61 16.39 21.92 18 21.92C19.61 21.92 20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z"/>
+        </svg>
+        Compartilhar
+      </button>
+    </div>
+
+    <div data-fb-comments="2" style="padding:8px 12px 10px 12px;font-size:13px;display:none;">
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+        <img src="https://i.postimg.cc/Hx53m7rd/foto-6.jpg" alt="Perfil" loading="lazy" style="width:32px;height:32px;border-radius:999px;object-fit:cover;">
+        <div style="background:#f0f2f5;border-radius:16px;padding:8px 10px;max-width:100%;">
+          <div style="font-weight:600;color:#111827;font-size:13px;margin-bottom:2px;">
+            Marta Lima
+          </div>
+          <div style="color:#111827;line-height:1.4;">
+            Rafa, uso esse material na escola municipal e é a mesma coisa aqui.
+            Criança com muita dificuldade começou a acompanhar a turma, impressionante.
+          </div>
+        </div>
+      </div>
+
+      <div style="padding-left:40px;font-size:12px;color:#6b7280;margin-top:2px;margin-bottom:6px;">
+        Curtir · Responder · 41 min
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+        <img src="https://i.postimg.cc/JznqnFsD/foto-7.jpg" alt="Perfil" loading="lazy" style="width:32px;height:32px;border-radius:999px;object-fit:cover;">
+        <div style="background:#f0f2f5;border-radius:16px;padding:8px 10px;max-width:100%;">
+          <div style="font-weight:600;color:#111827;font-size:13px;margin-bottom:2px;">
+            Bruno Fernandes
+          </div>
+          <div style="color:#111827;line-height:1.4;">
+            tava atras de algo assim mano, livro parado aqui em casa e ele nao ligava.
+            vou testar esse kit aí com meu filho.
+          </div>
+        </div>
+      </div>
+
+      <div style="padding-left:40px;font-size:12px;color:#6b7280;margin-top:2px;margin-bottom:6px;">
+        Curtir · Responder · 9 min
+      </div>
+
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <div style="width:32px;height:32px;border-radius:999px;background:#e5e7eb;"></div>
+        <div
+          style="flex:1;display:flex;align-items:center;gap:6px;background:#ffffff;border-radius:999px;border:1px solid #d1d5db;padding:2px 6px;"
+        >
+          <input
+            type="text"
+            placeholder="Escreva um comentário..."
+            data-fb-input="2"
+            style="flex:1;border:none;font-size:13px;padding:4px 4px;outline:none;background:transparent;"
+          />
+          <button
+            type="button"
+            data-fb-send="2"
+            aria-label="Publicar comentário"
+            style="border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:4px;"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.4 20.6L4.8 13.2L11.2 12L4.8 10.8L3.4 3.4L21 12L3.4 20.6Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST 3 (só texto) -->
+  <div style="background:#ffffff;border-radius:12px;box-shadow:0 0 18px rgba(0,0,0,0.04);border:1px solid #e5e7eb;">
+    <div style="padding:12px 12px 8px 12px;display:flex;align-items:flex-start;gap:8px;">
+      <img src="https://i.postimg.cc/wvKcwT0w/foto-8.jpg" alt="Perfil" loading="lazy" style="width:40px;height:40px;border-radius:999px;object-fit:cover;">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="font-weight:600;font-size:14px;color:#111827;">Elaine Rodrigues</span>
+        </div>
+        <div style="font-size:11px;color:#6b7280;">Ontem · Amigos</div>
+      </div>
+      <div style="font-size:16px;color:#6b7280;cursor:pointer;">⋯</div>
+    </div>
+
+    <div style="padding:0 12px 10px 12px;font-size:14px;color:#111827;line-height:1.5;">
+      Confesso que eu tinha muito medo da minha filha "ficar pra trás" na escola.
+      Com o kit do <span style="color:#1877f2;">@ClubeGrafismoKids</span>
+      ela começou a ler as placas da rua, rótulo de comida, tudo que vê pela frente 😅
+    </div>
+
+    <div style="padding:4px 12px 0 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280;">
+      <div style="display:flex;align-items:center;gap:4px;">
+        <div style="display:flex;align-items:center;">
+          <div style="width:16px;height:16px;border-radius:999px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1px solid #fff;">👍</div>
+          <div style="margin-left:-4px;width:16px;height:16px;border-radius:999px;background:#f97316;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1px solid #fff;">❤️</div>
+          <div style="margin-left:-4px;width:16px;height:16px;border-radius:999px;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1px solid #fff;">😮</div>
+        </div>
+        <span>203</span>
+      </div>
+      <div>32 comentários · 11 compartilhamentos</div>
+    </div>
+
+    <div style="margin:4px 12px 0 12px;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:4px 0;display:flex;justify-content:space-around;font-size:13px;color:#4b5563;">
+      <button
+        type="button"
+        data-fb-action="like"
+        data-fb-post="3"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 21H5C3.9 21 3 20.1 3 19V12C3 10.9 3.9 10 5 10H9V21ZM21 11C21 9.9 20.1 9 19 9H14.69L15.64 4.43L15.66 4.11C15.66 3.7 15.5 3.31 15.21 3.02L14.17 2L8.59 7.59C8.22 7.95 8 8.45 8 9V19C8 20.1 8.9 21 10 21H17.5C18.37 21 19.14 20.44 19.41 19.62L21.86 12.54C21.95 12.28 22 12.02 22 11.75V11.5L21.99 11.45L21.99 11.4C21.7 11.15 21.37 11 21 11Z"/>
+        </svg>
+        Curtir
+      </button>
+
+      <button
+        type="button"
+        data-fb-action="comment"
+        data-fb-post="3"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2H4C2.9 2 2 2.9 2 4V18L6 14H20C21.1 14 22 13.1 22 12V4C22 2.9 21.1 2 20 2Z"/>
+        </svg>
+        Comentar
+      </button>
+
+      <button
+        type="button"
+        data-fb-action="share"
+        data-fb-post="3"
+        style="flex:1;border:none;background:transparent;cursor:pointer;padding:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4b5563" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5C21 3.34 19.66 2 18 2C16.34 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12C3 13.66 4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.35C15.11 18.56 15.08 18.78 15.08 19C15.08 20.61 16.39 21.92 18 21.92C19.61 21.92 20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z"/>
+        </svg>
+        Compartilhar
+      </button>
+    </div>
+
+    <div data-fb-comments="3" style="padding:8px 12px 10px 12px;font-size:13px;display:none;">
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+        <img src="https://i.postimg.cc/KzyBnp8W/foto-10.jpg" alt="Perfil" loading="lazy" style="width:32px;height:32px;border-radius:999px;object-fit:cover;">
+        <div style="background:#f0f2f5;border-radius:16px;padding:8px 10px;max-width:100%;">
+          <div style="font-weight:600;color:#111827;font-size:13px;margin-bottom:2px;">
+            Sueli Andrade
+          </div>
+          <div style="color:#111827;line-height:1.4;">
+            aqui em casa foi igualzinho kkk antes ela só queria celular, agora coloca o kit
+            na mesa e fala que é "hora do estudo divertido" 😂
+          </div>
+        </div>
+      </div>
+
+      <div style="padding-left:40px;font-size:12px;color:#6b7280;margin-top:2px;margin-bottom:6px;">
+        Curtir · Responder · 2 h
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;">
+        <img src="https://i.postimg.cc/Jz1FQKGH/foto-2.jpg" alt="Perfil" loading="lazy" style="width:32px;height:32px;border-radius:999px;object-fit:cover;">
+        <div style="background:#f0f2f5;border-radius:16px;padding:8px 10px;max-width:100%;">
+          <div style="font-weight:600;color:#111827;font-size:13px;margin-bottom:2px;">
+            Patrícia Nogueira
+          </div>
+          <div style="color:#111827;line-height:1.4;">
+            gente pra quem ta em dúvida, eu comprei meio com medo mas valeu cada centavo.
+            só nao deixa acumular atividade, faz um pouquinho todo dia que funciona.
+          </div>
+        </div>
+      </div>
+
+      <div style="padding-left:40px;font-size:12px;color:#6b7280;margin-top:2px;margin-bottom:6px;">
+        Curtir · Responder · 36 min
+      </div>
+
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <div style="width:32px;height:32px;border-radius:999px;background:#e5e7eb;"></div>
+        <div
+          style="flex:1;display:flex;align-items:center;gap:6px;background:#ffffff;border-radius:999px;border:1px solid #d1d5db;padding:2px 6px;"
+        >
+          <input
+            type="text"
+            placeholder="Escreva um comentário..."
+            data-fb-input="3"
+            style="flex:1;border:none;font-size:13px;padding:4px 4px;outline:none;background:transparent;"
+          />
+          <button
+            type="button"
+            data-fb-send="3"
+            aria-label="Publicar comentário"
+            style="border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:4px;"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.4 20.6L4.8 13.2L11.2 12L4.8 10.8L3.4 3.4L21 12L3.4 20.6Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;display:flex;align-items:center;justify-content:center;gap:6px;"
+  >
+    <span style="color:#1877f2;font-size:16px;">f</span>
+    <span>Plug-in social do Facebook</span>
+  </div>
+</div>
+`;
+
+          wrap.insertAdjacentElement("afterend", arrowSection);
+          arrowSection.insertAdjacentElement("afterend", benefitsSection);
+          benefitsSection.insertAdjacentElement("afterend", cardSection);
+          cardSection.insertAdjacentElement("afterend", cardSection2);
+          cardSection2.insertAdjacentElement("afterend", cardSection3);
+          cardSection3.insertAdjacentElement("afterend", cardSection4);
+          cardSection4.insertAdjacentElement("afterend", facebookSection);
+
+          attachFacebookInteractions(facebookSection);
+        }
+
+        async function fetchReplayInfo() {
+          try {
+            const r = await fetch(
+              "https://fast.wistia.com/embed/medias/" + REPLAY_ID + ".json",
+              { mode: "cors", credentials: "omit" }
+            );
+            const j = await r.json();
+            const m = (j && j.media) || {};
+            const poster =
+              m.thumbnail && m.thumbnail.url ? m.thumbnail.url : null;
+            const a = (m.assets || [])
+              .filter(
+                (x) =>
+                  x.contentType === "video/mp4" || /mp4/i.test(x.type || "")
+              )
+              .sort((A, B) => (B.width || 0) - (A.width || 0))[0];
+
+            return { poster: poster, mp4: a ? a.url : null };
+          } catch (_) {
+            return { poster: null, mp4: null };
+          }
+        }
+
+        async function insertReplayIfNeeded() {
+          if (document.getElementById("replay-wrap")) return;
+          const target = findTextBlock();
+          if (!target) return;
+
+          const info = await fetchReplayInfo();
+          insertReplayVideo(info.poster, info.mp4);
+        }
+
+        document.addEventListener("DOMContentLoaded", () =>
+          setTimeout(insertReplayIfNeeded, 300)
+        );
+        window.addEventListener("load", () =>
+          setTimeout(insertReplayIfNeeded, 600)
+        );
+        setTimeout(insertReplayIfNeeded, 2000);
+        setTimeout(insertReplayIfNeeded, 4000);
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const SCROLL_OFFSET_PX = 120;
+        const SS_KEY = "once_scroll_replay_v7";
+
+        function findTextBlock() {
+          const nodes = document.querySelectorAll(
+            "section,div,article,main,h1,h2,h3,p"
+          );
+          const a =
+            "veja como é facil ensinar seu filho(a) a ler com o grafismo fonético";
+          const b = "aperte o play";
+
+          for (const el of nodes) {
+            const t = (el.innerText || el.textContent || "").toLowerCase();
+            if (t.includes(a) && t.includes(b)) return el;
+          }
+          return null;
+        }
+
+        function ensureAnchorAfterText() {
+          const textEl = findTextBlock();
+          if (!textEl) return null;
+
+          let anchor = textEl.nextElementSibling;
+          if (anchor && anchor.hasAttribute && anchor.hasAttribute("data-replay-anchor")) {
+            return anchor;
+          }
+
+          anchor = document.createElement("span");
+          anchor.setAttribute("data-replay-anchor", "");
+          anchor.style.display = "block";
+          textEl.insertAdjacentElement("afterend", anchor);
+          return anchor;
+        }
+
+        function getReplayTarget() {
+          const wrap = document.getElementById("replay-wrap");
+          if (wrap) return wrap;
+
+          const anchor = ensureAnchorAfterText();
+          if (anchor) {
+            let el = anchor.nextElementSibling;
+            let hops = 0;
+
+            while (el && hops < 8) {
+              if (
+                el.matches &&
+                el.matches(
+                  "video, iframe, .video, .player, [data-video], [data-wistia]"
+                )
+              ) {
+                return el;
+              }
+
+              const v =
+                el.querySelector &&
+                el.querySelector(
+                  "video, iframe, .video, .player, [data-video], [data-wistia]"
+                );
+
+              if (v) return v;
+
+              el = el.nextElementSibling;
+              hops++;
+            }
+            return anchor;
+          }
+
+          return document.querySelector("#replay-wrap, video, iframe");
+        }
+
+        function scrollToTarget(el) {
+          const rect = el.getBoundingClientRect();
+          const y = Math.max(0, window.pageYOffset + rect.top - SCROLL_OFFSET_PX);
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+
+        function scrollOnceIfReady() {
+          try {
+            if (sessionStorage.getItem(SS_KEY) === "1") return true;
+          } catch (e) {}
+
+          const target = getReplayTarget();
+          if (!target) return false;
+
+          scrollToTarget(target);
+          try {
+            sessionStorage.setItem(SS_KEY, "1");
+          } catch (e) {}
+          return true;
+        }
+
+        function waitAndScroll() {
+          try {
+            if (sessionStorage.getItem(SS_KEY) === "1") return;
+          } catch (e) {}
+
+          if (scrollOnceIfReady()) return;
+
+          const deadline = Date.now() + 12000;
+
+          const obs = new MutationObserver(() => {
+            if (scrollOnceIfReady()) {
+              obs.disconnect();
+            } else if (Date.now() > deadline) {
+              obs.disconnect();
+            }
+          });
+
+          obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+          let delay = 200;
+          (function tick() {
+            if (Date.now() > deadline) return;
+            if (scrollOnceIfReady()) return;
+
+            delay = Math.min(delay * 2, 1600);
+            setTimeout(tick, delay);
+          })();
+        }
+
+        document.addEventListener("gate:released", waitAndScroll);
+
+        (function watchGateRemoval() {
+          const gate = document.getElementById("gate");
+          if (!gate) {
+            window.addEventListener("load", () =>
+              setTimeout(waitAndScroll, 200)
+            );
+            return;
+          }
+
+          const parent = gate.parentNode || document.body;
+          const obs = new MutationObserver(() => {
+            if (!document.getElementById("gate")) {
+              obs.disconnect();
+              waitAndScroll();
+            }
+          });
+
+          obs.observe(parent, { childList: true, subtree: true });
+        })();
+
+        window.addEventListener("load", () => setTimeout(waitAndScroll, 300));
+      })();
+    </script>
+
+    <!-- SEÇÃO FINAL: KIT DE ATIVIDADES (SEÇÃO LARANJA COMPLETA) -->
+    <section class="kit-section" id="kit-atividades">
+      <div class="kit-section-inner">
+        <div class="kit-section-tag">KIT COMPLETO DE ATIVIDADES</div>
+
+        <h2 class="kit-section-title">
+          Veja tudo o que seu filho vai receber no Kit de Grafismo Fonético
+        </h2>
+
+        <p class="kit-section-sub">
+          Cadernos organizados em ordem de dificuldade, com atividades lúdicas e
+          ilustradas, para você saber exatamente por onde começar e como avançar
+          sem deixar nenhuma etapa importante de fora.
+        </p>
+
+        <div class="carousel-section">
+          <div class="carousel-wrapper">
+            <div class="carousel-track">
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/nLtmwBrx/IMG-1401.png" alt="Caderno 1" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/90v0wHwb/IMG-1402.png" alt="Caderno 2" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/s2VXhcxk/IMG-1403.png" alt="Caderno 3" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/CMWbf3gc/IMG-1406.png" alt="Caderno 4" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/VkwMKX5T/IMG-1407.png" alt="Caderno 5" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/hvxzrGBs/IMG-1408.png" alt="Caderno 6" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/Dwf0W6SV/IMG-1409.png" alt="Caderno 7" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/5NbNGgqv/IMG-1410.png" alt="Caderno 8" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/fb9NkSjP/IMG-1411.png" alt="Caderno 9" loading="lazy">
+              </div>
+              <div class="carousel-item">
+                <img src="https://i.postimg.cc/prqN3fRK/IMG-1412.png" alt="Caderno 10" loading="lazy">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="kit-caption">
+          <span>Importante:</span>
+          todas as páginas do kit seguem uma ordem pedagógica pensada para
+          destravar a leitura passo a passo — você só precisa seguir a
+          sequência dos cadernos.
+        </p>
+      </div>
+    </section>
+
+    <!-- LISTA DE ATIVIDADES -->
+    <section class="activities-list-section">
+      <button class="activity-button green">
+        + DE 100 ATIVIDADES DE GRAFISMO<br>FONÉTICO
+      </button>
+      <button class="activity-button orange">
+        ATIVIDADES NÍVEL 01: PALAVRAS<br>COM 02 SÍLABAS
+      </button>
+      <button class="activity-button blue">
+        ATIVIDADES NÍVEL 02:<br>PALAVRAS COM 03 SÍLABAS
+      </button>
+      <button class="activity-button red">
+        ATIVIDADES NÍVEL 03: PALAVRAS<br>COM 04 SÍLABAS
+      </button>
+      <button class="activity-button orange">
+        ATIVIDADES GRAFISMO NA LETRA<br>CURSIVA E BASTÃO
+      </button>
+    </section>
+
+    <!-- SIMPLES DE USAR -->
+    <section class="simple-usage-section">
+      <h2 class="simple-usage-title">
+        Muito simples de começar<br>a utilizar!
+      </h2>
+
+      <div class="usage-card">
+        <img src="https://i.postimg.cc/FHwHbGrt/Chat-GPT-Image-27-de-nov-de-2025-07-42-56.png" alt="E-mail" class="usage-icon" loading="lazy" />
+
+        <h3 class="usage-card-title">
+          CHEGA NO<br>E-MAIL
+        </h3>
+
+        <p class="usage-card-text">
+          Após a compra você recebe no e-mail o acesso a plataforma com arquivos em formato PDF.
+        </p>
+      </div>
+    </section>
+
+    <!-- VOCÊ IMPRIME -->
+    <section class="simple-usage-section">
+      <div class="usage-card">
+        <img src="https://i.postimg.cc/SRR7wvm4/Chat-GPT-Image-27-de-nov-de-2025-05-36-25.png" alt="Impressora" class="usage-icon" loading="lazy" />
+
+        <h3 class="usage-card-title">
+          VOCÊ IMPRIME
+        </h3>
+
+        <p class="usage-card-text">
+          Você pode imprimir quando quiser, pois o acesso é VITALÍCIO e quantas vezes desejar.
+        </p>
+      </div>
+    </section>
+
+    <!-- OS PEQUENOS AMAM -->
+    <section class="bonus-section">
+      <div class="bonus-top-card">
+        <img src="https://i.postimg.cc/zfyzHDtz/Chat-GPT-Image-27-de-nov-de-2025-05-26-35.png" alt="Lápis Coloridos" class="pencils-icon" loading="lazy" />
+
+        <h3 class="usage-card-title">
+          OS PEQUENOS<br>AMAM
+        </h3>
+
+        <p class="usage-card-text">
+          Temos uma ótima notícia pra você, MÃOS À OBRA! Importante que sempre auxilie seu pequeno nas atividades.
+        </p>
+      </div>
+    </section>
+
+    <!-- E AINDA NÃO ACABOU -->
+    <section class="bonus-and-more">
+      <h2>e ainda não acabou...</h2>
+    </section>
+
+    <!-- GARANTINDO SEU ACESSO HOJE -->
+    <section class="bonus-guarantee-card">
+      <h3 class="bonus-guarantee-title">
+        GARANTINDO SEU<br>ACESSO HOJE
+      </h3>
+
+      <div class="bonus-highlight-container">
+        <p class="bonus-highlight">
+          VOCÊ LEVA <span class="bonus-number">6</span> SUPER<br>BÔNUS<span class="gift-emoji">🎁</span>
+        </p>
+      </div>
+    </section>
+
+   <!-- BONUS PRODUCT CARD SECTION -->
+<section class="bonus-product-section">
+  <div class="bonus-product-card">
+    <img src="https://i.postimg.cc/sf4Sxc00/Design-sem-nome-(7).png" alt="Caderno Alfabeto com Imagem" loading="lazy" style="width: 100%; height: auto; display: block; margin-bottom: 16px;">
+    
+    <h3 class="bonus-product-title">CADERNO<br>ALFABETO COM IMAGEM</h3>
+    
+    <p class="bonus-product-description">
+      Apresenta cada letra do alfabeto com imagens associadas, ajudando na familiarização das crianças com as letras de forma visual e divertida.
+    </p>
+    <div class="bonus-product-price">
+      <span class="price-old">De R$ 37</span>
+      <span class="price-free">HOJE: GRÁTIS</span>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS PRODUCT CARD 2 SECTION -->
+<section class="bonus-product-section">
+  <div class="bonus-product-card">
+    <img src="https://i.postimg.cc/hGxVM0yy/Design-sem-nome-(1).png" alt="Caderno Quebra Cabeça Alfabeto" loading="lazy" style="width: 200%; height: auto; display: block; margin-bottom: 16px;">
+    
+    <h3 class="bonus-product-title">CADERNO<br>QUEBRA CABEÇA ALFABETO</h3>
+    
+    <p class="bonus-product-description">
+      Atividades de quebra-cabeça com letras do alfabeto para fixação divertida e interativa.
+    </p>
+    <div class="bonus-product-price">
+      <span class="price-old">De R$ 47</span>
+      <span class="price-free">HOJE: GRÁTIS</span>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS PRODUCT CARD 3 SECTION -->
+<section class="bonus-product-section">
+  <div class="bonus-product-card">
+    <img src="https://i.postimg.cc/Z5j6QR45/Design-sem-nome-(2).png" alt="Caderno Formando Palavras" loading="lazy" style="width: 200%; height: auto; display: block; margin-bottom: 16px;">
+    
+    <h3 class="bonus-product-title">CADERNO<br>FORMANDO PALAVRAS</h3>
+    
+    <p class="bonus-product-description">
+      Exercícios de formação de palavras que incentivam leitura e escrita, ajudando as crianças a construir vocabulário.
+    </p>
+    <div class="bonus-product-price">
+      <span class="price-old">De R$ 57</span>
+      <span class="price-free">HOJE: GRÁTIS</span>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS PRODUCT CARD 4 SECTION -->
+<section class="bonus-product-section">
+  <div class="bonus-product-card">
+    <img src="https://i.postimg.cc/Ls22J91Z/Design-sem-nome-(4).png" alt="Caderno Alfabeto com Relógio" loading="lazy" style="width: 200%; height: auto; display: block; margin-bottom: 16px;">
+    
+    <h3 class="bonus-product-title">CADERNO<br>ALFABETO COM RELÓGIO</h3>
+    
+    <p class="bonus-product-description">
+      Caderno interativo que ensina as letras do alfabeto junto a um relógio, promovendo a leitura e noções de tempo de forma lúdica.
+    </p>
+    <div class="bonus-product-price">
+      <span class="price-old">De R$ 39</span>
+      <span class="price-free">HOJE: GRÁTIS</span>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS PRODUCT CARD 5 SECTION -->
+<section class="bonus-product-section">
+  <div class="bonus-product-card">
+    <img src="https://i.postimg.cc/kgrthb0r/Design-sem-nome-(5).png" alt="Caderno Alfabeto Traçado" loading="lazy" style="width: 200%; height: auto; display: block; margin-bottom: 16px;">
+    
+    <h3 class="bonus-product-title">CADERNO<br>ALFABETO TRAÇADO</h3>
+    
+    <p class="bonus-product-description">
+      Caderno com letras do alfabeto traçadas, perfeito para que as crianças pratiquem a escrita e melhorem sua coordenação motora.
+    </p>
+    <div class="bonus-product-price">
+      <span class="price-old">De R$ 27</span>
+      <span class="price-free">HOJE: GRÁTIS</span>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS PRODUCT CARD 6 SECTION -->
+<section class="bonus-product-section">
+  <div class="bonus-product-card">
+    <img src="https://i.postimg.cc/6QCxwy5R/Design-sem-nome-(6).png" alt="Caderno Alfabeto com Carinhas" loading="lazy" style="width: 200%; height: auto; display: block; margin-bottom: 16px;">
+    
+    <h3 class="bonus-product-title">CADERNO<br>ALFABETO COM CARINHAS</h3>
+    
+    <p class="bonus-product-description">
+      Caderno divertido que associa cada letra do alfabeto a carinhas expressivas, ajudando as crianças a aprender com alegria e criatividade.
+    </p>
+    <div class="bonus-product-price">
+      <span class="price-old">De R$ 49</span>
+      <span class="price-free">HOJE: GRÁTIS</span>
+    </div>
+  </div>
+</section>
+
+
+    <!-- RECAP SECTION -->
+    <section class="recap-section">
+      <div class="recap-container">
+        <h2 class="recap-title">
+          Recapitulando tudo o que você vai receber junto com o
+        </h2>
+        <p class="recap-kit-name">
+          Kit Atividades Grafismo Fonético
+        </p>
+
+        <img
+          src="https://i.postimg.cc/XN28Hss3/imagem-de-cima-principal.png"
+          alt="Kit Atividades Grafismo Fonético"
+          class="recap-main-image"
+          loading="lazy"
+        />
+
+        <ul class="recap-list">
+          <li class="recap-item">
+            <span class="recap-icon">✅</span>
+            <div>
+              <span class="recap-item-label">Atividades de Grafismo Fonético Nível 1, 2 e 3</span>
+              <span class="recap-price-old">De R$197</span>
+            </div>
+          </li>
+
+          <li class="recap-item">
+            <span class="recap-icon">✅</span>
+            <div>
+              <span class="recap-item-label">Bônus 01:</span>
+              <span class="recap-item-text">Caderno Alfabeto com Imagem</span>
+              <span class="recap-price-old">De R$ 37</span>
+            </div>
+          </li>
+
+          <li class="recap-item">
+            <span class="recap-icon">✅</span>
+            <div>
+              <span class="recap-item-label">Bônus 02:</span>
+              <span class="recap-item-text">Caderno Quebra-Cabeça Alfabeto</span>
+              <span class="recap-price-old">De R$ 47</span>
+            </div>
+          </li>
+
+          <li class="recap-item">
+            <span class="recap-icon">✅</span>
+            <div>
+              <span class="recap-item-label">Bônus 03:</span>
+              <span class="recap-item-text">Caderno Formando Palavras</span>
+              <span class="recap-price-old">De R$ 57</span>
+            </div>
+          </li>
+
+          <li class="recap-item">
+            <span class="recap-icon">✅</span>
+            <div>
+              <span class="recap-item-label">Bônus 04:</span>
+              <span class="recap-item-text">Caderno Alfabeto com Relógio</span>
+              <span class="recap-price-old">De R$ 39</span>
+            </div>
+          </li>
+
+          <li class="recap-item">
+            <span class="recap-icon">✅</span>
+            <div>
+              <span class="recap-item-label">Bônus 05:</span>
+              <span class="recap-item-text">Caderno Alfabeto Traçado</span>
+              <span class="recap-price-old">De R$ 27</span>
+            </div>
+          </li>
+
+          <li class="recap-item">
+            <span class="recap-icon">✅</span>
+            <div>
+              <span class="recap-item-label">Bônus 06:</span>
+              <span class="recap-item-text">Caderno Alfabeto com Carinhas</span>
+              <span class="recap-price-old">De R$ 49</span>
+            </div>
+          </li>
+        </ul>
+
+        <div class="recap-extra">
+          <span class="recap-emoji">🔒</span>
+          <span>Suporte Profissional</span>
+        </div>
+
+        <div class="recap-extra">
+          <span class="recap-emoji">💰</span>
+          <span>Garantia Incondicional</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICE OFFER SECTION -->
+    <section class="price-offer-section">
+      <div class="price-offer-container">
+        <p class="price-total-text">No total tudo deveria custar</p>
+        <div class="price-old-value">R$ 453,00</div>
+        <p class="price-today-text">Mas hoje você vai ter acesso completo por</p>
+        <div class="price-current-value">R$ 37</div>
+        <div class="price-installment">5 x de R$ 8,19 *</div>
+
+        <div class="price-divider"></div>
+
+        <div class="access-badges">
+          <span class="access-badge">Acesso Vitalício</span>
+          <span class="access-badge">|</span>
+          <span class="access-badge">Acesso Imediato</span>
+        </div>
+
+        <button class="cta-button-large">
+          QUERO GARANTIR O MEU KIT AGORA!
+        </button>
+
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Compra<br/>SEGURA</span>
+          </div>
+          <div class="trust-badge">
+            <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            <span>Satisfação<br/>GARANTIDA</span>
+          </div>
+          <div class="trust-badge">
+            <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            <span>Privacidade<br/>PROTEGIDA</span>
+          </div>
+        </div>
+
+        <div class="arrow-down-icon">↓</div>
+      </div>
+    </section>
+
+<!-- GUARANTEE SECTION -->
+<style>
+  .guarantee-section {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .guarantee-container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .guarantee-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 auto 25px auto;
+  }
+
+  .guarantee-badge img {
+    width: 350px;
+    max-width: 70vw;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    animation: pulse-badge 2s ease-in-out infinite;
+  }
+
+  .guarantee-section img,
+  .guarantee-section img:focus,
+  .guarantee-section img:focus-visible,
+  .guarantee-section img:active,
+  .guarantee-section img:hover,
+  .guarantee-badge img,
+  .guarantee-badge img:focus,
+  .guarantee-badge img:focus-visible,
+  .guarantee-badge img:active,
+  .guarantee-badge img:hover {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: 0 !important;
+    outline-width: 0 !important;
+    outline-style: none !important;
+    outline-color: transparent !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    filter: none !important;
+  }
+
+  @keyframes pulse-badge {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+
+
+
+  .guarantee-stars {
+    font-size: 30px;
+    margin-top: 10px;
+    color: #f5c400;
+  }
+
+  .guarantee-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 18px;
+  }
+
+  .guarantee-text {
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 650px;
+    margin: 10px auto;
+  }
+
+/* ÍCONES GRANDES + COLADOS */
+
+.guarantee-icons {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;                /* SEM ESPAÇO ENTRE ELES */
+  flex-wrap: nowrap;       /* impede quebra lado-a-lado */
+}
+
+.guarantee-icons img {
+  width: 1000px;      /* 4x maior */
+  max-width: 95vw;    /* não deixa quebrar a tela */
+  height: auto;
+  margin: 0 -8px;     /* aproxima para ficarem colados */
+}
+
+
+
+
+/* MOBILE — ainda grandes e grudados */
+@media (max-width: 600px) {
+  .guarantee-icons img {
+    width: 200px;
+    max-width: 48vw;
+    margin: 0 -3px;
+  }
+
+
+    .guarantee-title {
+      font-size: 26px;
+    }
+    .guarantee-text {
+      font-size: 16px;
+    }
+    .guarantee-icons img {
+      width: 120px;
+      max-width: 40vw;
+    }
+  }
+
+/* ===== RESPONSIVIDADE PARA DESKTOP (TELAS GRANDES) ===== */
+
+/* Telas acima de 1366px */
+@media (min-width: 1366px) {
+  /* Containers principais com largura máxima aumentada */
+  .kit-section,
+  .simple-usage-section,
+  .bonus-section,
+  .guarantee-section {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .kit-header {
+    max-width: 650px;
+  }
+
+  .kit-carousel-container {
+    max-width: 580px;
+  }
+
+  .usage-card,
+  .bonus-card,
+  .guarantee-container {
+    max-width: 650px;
+  }
+
+  /* Aumentar fontes proporcionalmente */
+  .kit-title {
+    font-size: 34px;
+  }
+
+  .kit-subtitle {
+    font-size: 19px;
+  }
+
+  .carousel-btn {
+    width: 54px;
+    height: 54px;
+    font-size: 26px;
+  }
+
+  .simple-usage-title,
+  .bonus-title {
+    font-size: 34px;
+  }
+
+  .usage-card-title,
+  .bonus-card-title {
+    font-size: 31px;
+  }
+
+  .usage-card-text,
+  .bonus-card-text {
+    font-size: 18px;
+  }
+
+  .usage-icon {
+    width: 135px;
+    height: 135px;
+  }
+
+  .guarantee-title {
+    font-size: 34px;
+  }
+
+  .guarantee-text {
+    font-size: 19px;
+  }
+
+  .guarantee-icons img {
+    width: 260px;
+  }
+}
+
+/* Telas acima de 1920px (Full HD) */
+@media (min-width: 1920px) {
+  /* Containers principais ainda mais largos */
+  .kit-section,
+  .simple-usage-section,
+  .bonus-section,
+  .guarantee-section {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .kit-header {
+    max-width: 800px;
+  }
+
+  .kit-carousel-container {
+    max-width: 700px;
+  }
+
+  .usage-card,
+  .bonus-card,
+  .guarantee-container {
+    max-width: 800px;
+  }
+
+  /* Fontes maiores para melhor leitura */
+  .kit-title {
+    font-size: 40px;
+  }
+
+  .kit-subtitle {
+    font-size: 22px;
+  }
+
+  .carousel-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .simple-usage-title,
+  .bonus-title {
+    font-size: 40px;
+  }
+
+  .usage-card-title,
+  .bonus-card-title {
+    font-size: 36px;
+  }
+
+  .usage-card-text,
+  .bonus-card-text {
+    font-size: 21px;
+  }
+
+  .usage-icon {
+    width: 150px;
+    height: 150px;
+  }
+
+  .guarantee-title {
+    font-size: 40px;
+  }
+
+  .guarantee-text {
+    font-size: 22px;
+  }
+
+  .guarantee-icons img {
+    width: 300px;
+  }
+
+  /* Vídeo vertical maior */
+  #replay-wrap {
+    max-width: 420px;
+  }
+}
+
+/* Telas acima de 2560px (Ultrawide / 4K) */
+@media (min-width: 2560px) {
+  /* Containers com largura máxima controlada para evitar expansão excessiva */
+  .kit-section,
+  .simple-usage-section,
+  .bonus-section,
+  .guarantee-section {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .kit-header {
+    max-width: 1000px;
+  }
+
+  .kit-carousel-container {
+    max-width: 900px;
+  }
+
+  .usage-card,
+  .bonus-card,
+  .guarantee-container {
+    max-width: 1000px;
+  }
+
+  /* Fontes ajustadas para telas muito grandes */
+  .kit-title {
+    font-size: 48px;
+  }
+
+  .kit-subtitle {
+    font-size: 26px;
+  }
+
+  .carousel-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 32px;
+  }
+
+  .simple-usage-title,
+  .bonus-title {
+    font-size: 48px;
+  }
+
+  .usage-card-title,
+  .bonus-card-title {
+    font-size: 42px;
+  }
+
+  .usage-card-text,
+  .bonus-card-text {
+    font-size: 24px;
+  }
+
+  .usage-icon {
+    width: 180px;
+    height: 180px;
+  }
+
+  .guarantee-title {
+    font-size: 48px;
+  }
+
+  .guarantee-text {
+    font-size: 26px;
+  }
+
+  .guarantee-icons img {
+    width: 360px;
+  }
+
+  /* Vídeo vertical maior ainda */
+  #replay-wrap {
+    max-width: 500px;
+  }
+
+  /* Gate video maior */
+  @media (min-width: 768px) {
+    .gate-wrap {
+      max-width: 550px;
+    }
+  }
+}
+</style>
+
+<section class="guarantee-section">
+  <div class="guarantee-container">
+
+    <div class="guarantee-badge">
+      <img src="https://i.postimg.cc/NfxSY09Z/Chat-GPT-Image-27-de-nov-de-2025-07-27-22.png" alt="7 Dias de Garantia" loading="lazy">
+      <div class="guarantee-stars">★ ★</div>
+    </div>
+
+  <h2 class="guarantee-title">
+  <br>GARANTIA DE<br> SATISFAÇÃO TOTAL
+</h2>
+
+    <p class="guarantee-text">
+      Estamos tão certos de que o Kit de Grafismo Fonético vai ajudar seu filho a ler com mais facilidade, que oferecemos uma garantia de <strong>satisfação total por 7 dias.</strong>
+    </p>
+
+    <p class="guarantee-text">
+      Se, por qualquer motivo, você sentir que o material não <em>foi</em> útil ou que seu filho não se adaptou, <strong>é só nos avisar dentro desse prazo e devolveremos 100% do seu investimento</strong> — sem perguntas ou burocracia.
+    </p>
+
+    <p class="guarantee-text">
+      A sua tranquilidade vem em primeiro lugar. Você compra hoje, testa com calma, e só continua se realmente perceber resultados.
+    </p>
+
+    <!-- ÍCONES ADICIONADOS AQUI -->
+    <div class="guarantee-icons">
+      <img src="https://i.postimg.cc/BQLW12y9/Chat-GPT-Image-27-de-nov-de-2025-01-03-31.png" loading="lazy">
+      <img src="https://i.postimg.cc/CKBmDFMM/Chat-GPT-Image-27-de-nov-de-2025-04-16-02.png" loading="lazy">
+    </div>
+
+  </div>
+</section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section">
+      <div class="faq-container">
+        <h2 class="faq-title">PERGUNTAS FREQUENTES</h2>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span class="faq-arrow">▶</span>
+            <span>Quais são as Formas de Pagamento?</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              PIX.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span class="faq-arrow">▶</span>
+            <span>Como acesso a plataforma?</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              O acesso a Área de Membros é enviado para seu e-mail imediatamente após a confirmação do pagamento. Lá você poderá baixar todo o conteúdo em PDF!
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span class="faq-arrow">▶</span>
+            <span>Tenho que pagar todo mês?</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Não, o pagamento é apenas uma vez e você poderá ter acesso a ele vitalício.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span class="faq-arrow">▶</span>
+            <span>Posso tirar dúvidas?</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Sim! Basta chamar nossa equipe de suporte pelo botão de WhatsApp dessa página, pelo nosso Instagram, pelo Facebook ou por email.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span class="faq-arrow">▶</span>
+            <span>Para quem é indicado o material?</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Nossas atividades de grafismo fonético são projetadas para crianças de diferentes faixas etárias, abrangendo desde a primeira infância até o ensino fundamental.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span class="faq-arrow">▶</span>
+            <span>Quais são os benefícios Grafismos Fonéticos?</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Os grafismos fonéticos facilitam a associação entre som e letra, desenvolvem a consciência fonológica e fortalecem a memória visual e auditiva. Eles também aprimoram a coordenação motora e tornam a leitura mais interessante, ajudando a prevenir dificuldades de leitura e incentivando o aprendizado ativo.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-logo-badge">
+        <div class="footer-logo-text">Clube Grafismo Kids</div>
+      </div>
+
+      <div class="footer-social">
+        <a href="#" class="footer-social-link" aria-label="Instagram">
+          <svg class="footer-social-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="WhatsApp">
+          <svg class="footer-social-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="Facebook">
+          <svg class="footer-social-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+      </div>
+
+      <p class="footer-copyright">
+        Copyright ©2025. Todos os direitos reservados – Editora Inove
+      </p>
+    </footer>
+
+    <!-- CARROSSEL INFINITO CONTÍNUO -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const track = document.querySelector('.carousel-track');
+        if (!track) return;
+
+        const items = Array.from(track.children);
+
+        items.forEach(item => {
+          const clone = item.cloneNode(true);
+          track.appendChild(clone);
+        });
+
+        let position = 0;
+        const speed = 0.8;
+
+        const trackStyles = window.getComputedStyle(track);
+        const gap = parseFloat(trackStyles.columnGap || trackStyles.gap || '28') || 28;
+
+        function loop() {
+          position -= speed;
+
+          const firstItem = track.children[0];
+          if (!firstItem) return;
+
+          const firstItemWidth = firstItem.getBoundingClientRect().width + gap;
+
+          if (Math.abs(position) >= firstItemWidth) {
+            track.appendChild(firstItem);
+            position += firstItemWidth;
+          }
+
+          track.style.transform = `translateX(${position}px)`;
+
+          requestAnimationFrame(loop);
+        }
+
+        loop();
+      });
+
+      const faqItems = document.querySelectorAll('.faq-item');
+
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+
+          faqItems.forEach(otherItem => {
+            otherItem.classList.remove('active');
+          });
+
+          if (!isActive) {
+            item.classList.add('active');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

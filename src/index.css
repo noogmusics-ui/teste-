@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @keyframes dash {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  .animate-dash {
+    animation: dash 3s linear infinite;
+  }
+}
+
+.guarantee-badge img {
+  width: 280px;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 0 transparent) !important;
+}
